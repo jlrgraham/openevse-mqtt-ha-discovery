@@ -100,7 +100,7 @@ OPENEVSE_HA_DISCOVERY_KEYS = {
             "device_class": "power",
             "unit_of_measurement": "kW",
             "state_class": "measurement",
-            "value_template": "{{ value | float / 1000 | round(2) }}",
+            "value_template": "{{ '%0.3f' | format((float(value) / 1000)) }}",
             "enabled_by_default": "false",
         },
     },
