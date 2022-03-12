@@ -12,7 +12,6 @@ log_formatter = logging.Formatter('%(asctime)s [%(name)-12s] %(levelname)-8s %(m
 log_handler.setFormatter(log_formatter)
 logger.addHandler(log_handler)
 logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
 
 
 def on_connect(client, userdata, flags, rc):
