@@ -65,9 +65,9 @@ OPENEVSE_HA_DISCOVERY_KEYS = {
         "ha_domain": "sensor",
         "ha_name": "Session Energy",
         "ha_device_class": "power",
-        "ha_unit_of_meas": "W",
+        "ha_unit_of_meas": "kW",
         "ha_stat_cla": "measurement",
-        "ha_val_tpl": "{{ value | float | round(2) }}",
+        "ha_val_tpl": "{{ value | float / 1000 | round(2) }}",
         "ha_default_enabled": "false",
     },
     "state": {
