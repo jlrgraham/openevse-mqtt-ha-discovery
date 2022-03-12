@@ -1,6 +1,19 @@
+FROM python:3-slim AS ha_wheel_builder
+
+RUN apt-get update && apt-get install \
+    -y --no-install-recommends \
+    build-essential
+
+RUN pip wheel homeassistant
+
+
 FROM python:3-slim
 
 RUN pip install paho-mqtt certifi
+
+COPY --from=ha_wheel_builder /homeassistant-*.whl /
+COPY --from=ha_wheel_builder /ciso8601-*.whl /
+RUN pip install /homeassistant-*.whl /ciso8601-*.whl
 
 COPY openevse_mqtt_ha_discovery.py /openevse_mqtt_ha_discovery.py
 
