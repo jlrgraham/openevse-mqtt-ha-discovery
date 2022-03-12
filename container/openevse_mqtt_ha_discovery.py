@@ -16,19 +16,17 @@ logger.setLevel(logging.INFO)
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        logger.info("Connected to MQTT broker")
+        logger.info("MQTT: Connected to broker.")
         announce_subscribe = f"{OPENEVSE_ANNOUNCE_MQTT_PREFIX}/+"
-        logger.info(f"Subscribe: {announce_subscribe}")
+        logger.info(f"MQTT: Subscribe: {announce_subscribe}")
         client.subscribe(announce_subscribe)
     else:
-        logger.error(f"Failed to connect, rc: {rc}")
+        logger.error(f"MQTT: Failed to connect, rc: {rc}")
 
 
 def on_message(client, userdata, msg):
-    logger.debug(f"message received: f{str(msg.payload.decode('utf-8'))}")
-    logger.debug(f"message topic={msg.topic}")
-    logger.debug(f"message qos={msg.qos}")
-    logger.debug(f"message retain flag={msg.retain}")
+    logger.debug(f"MQTT: Message received: f{str(msg.payload.decode('utf-8'))}")
+    logger.debug(f"MQTT: Message topic: {msg.topic}, qos: {msg.qos}, retain flag: {msg.retain}")
 
     publish_ha_discovery(client, msg.topic, json.loads(msg.payload.decode("utf-8")))
 
@@ -106,7 +104,6 @@ OPENEVSE_HA_DISCOVERY_KEYS = {
 def publish_ha_discovery(client, announce_topic, announce_payload):
     topic_base = announce_payload["mqtt"]
     openevse_id = announce_payload["id"]
-    logger.debug(f"announce_topic: {announce_topic}")
 
     for key, config in OPENEVSE_HA_DISCOVERY_KEYS.items():
         discovery_topic = f"{HA_DISCOVERY_PREFIX}/{config['ha_domain']}/openevse-{openevse_id}-{key}/config"
@@ -146,9 +143,9 @@ def publish_ha_discovery(client, announce_topic, announce_payload):
 
         (result, mid) = client.publish(discovery_topic, json.dumps(discovery_data))
         if result != 0:
-            logger.error(f"Error publishing discovery, result: {result}, topic: {discovery_topic}")
+            logger.error(f"MQTT: Error publishing discovery, result: {result}, topic: {discovery_topic}")
         else:
-            logger.info(f"Published discovery, topic: {discovery_topic}")
+            logger.info(f"MQTT: Published discovery, topic: {discovery_topic}")
 
 
 def run():
@@ -158,7 +155,7 @@ def run():
     client = mqtt.Client(MQTT_CLIENT_ID)
 
     if MQTT_USERNAME is not None and MQTT_PASSWORD is not None:
-        logger.info(f"Connect as: {MQTT_USERNAME}")
+        logger.info(f"MQTT: Authentication enabled, connect as: {MQTT_USERNAME}")
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
 
     client.on_connect = on_connect
@@ -168,7 +165,7 @@ def run():
         logger.info("MQTT: Enable TLS.")
         client.tls_set(certifi.where())
 
-    logger.info(f"Connect to MQTT: {MQTT_BROKER}:{MQTT_PORT}")
+    logger.info(f"MQTT: Connect to {MQTT_BROKER}:{MQTT_PORT} ({MQTT_CLIENT_ID})")
     client.connect(MQTT_BROKER, MQTT_PORT, 60)
 
     client.loop_forever()
