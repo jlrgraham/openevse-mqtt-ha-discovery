@@ -146,6 +146,10 @@ OPENEVSE_HA_DISCOVERY_KEYS = {
 
 
 def publish_ha_discovery(client, announce_topic, announce_payload):
+    if "mqtt" not in announce_payload:
+        logger.error(f"Required key 'mqtt' not in: {announce_payload}")
+        return
+
     topic_base = announce_payload["mqtt"]
     openevse_id = announce_payload["id"]
 
