@@ -5,20 +5,29 @@ import time
 import json
 import logging
 
-from homeassistant.components.mqtt.abbreviations import ABBREVIATIONS as HA_MQTT_ABBREVIATIONS
-from homeassistant.components.mqtt.abbreviations import DEVICE_ABBREVIATIONS as HA_MQTT_DEVICE_ABBREVIATIONS
+from homeassistant.components.mqtt.abbreviations import (
+    ABBREVIATIONS as HA_MQTT_ABBREVIATIONS,
+)
+from homeassistant.components.mqtt.abbreviations import (
+    DEVICE_ABBREVIATIONS as HA_MQTT_DEVICE_ABBREVIATIONS,
+)
 
 
 logger = logging.getLogger(__name__)
 log_handler = logging.StreamHandler()
-log_formatter = logging.Formatter('%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s')
+log_formatter = logging.Formatter(
+    "%(asctime)s [%(name)-12s] %(levelname)-8s %(message)s"
+)
 log_handler.setFormatter(log_formatter)
 logger.addHandler(log_handler)
 logger.setLevel(logging.INFO)
 
 
 HA_MQTT_TO_ABBREVIATIONS = {v: k for k, v in HA_MQTT_ABBREVIATIONS.items()}
-HA_MQTT_TO_DEVICE_ABBREVIATIONS = {v: k for k, v in HA_MQTT_DEVICE_ABBREVIATIONS.items()}
+HA_MQTT_TO_DEVICE_ABBREVIATIONS = {
+    v: k for k, v in HA_MQTT_DEVICE_ABBREVIATIONS.items()
+}
+
 
 def abbreviate_ha_mqtt_keys(data):
     def rendered_generator(data, parent_key=None):
@@ -38,7 +47,9 @@ def abbreviate_ha_mqtt_keys(data):
             lookup_table = HA_MQTT_TO_DEVICE_ABBREVIATIONS
 
         for key, value in data.items():
-            logger.debug(f"abbreviate_ha_mqtt_keys generator: {key} -> {lookup_table.get(key, key)}")
+            logger.debug(
+                f"abbreviate_ha_mqtt_keys generator: {key} -> {lookup_table.get(key, key)}"
+            )
             yield lookup_table.get(key, key), rendered_generator(value, parent_key=key)
 
     return rendered_generator(data)
@@ -56,12 +67,16 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     logger.debug(f"MQTT: Message received: f{str(msg.payload.decode('utf-8'))}")
-    logger.debug(f"MQTT: Message topic: {msg.topic}, qos: {msg.qos}, retain flag: {msg.retain}")
+    logger.debug(
+        f"MQTT: Message topic: {msg.topic}, qos: {msg.qos}, retain flag: {msg.retain}"
+    )
 
     publish_ha_discovery(client, msg.topic, json.loads(msg.payload.decode("utf-8")))
 
 
-OPENEVSE_ANNOUNCE_MQTT_PREFIX = os.getenv("OPENEVSE_ANNOUNCE_MQTT_PREFIX", "openevse/announce")
+OPENEVSE_ANNOUNCE_MQTT_PREFIX = os.getenv(
+    "OPENEVSE_ANNOUNCE_MQTT_PREFIX", "openevse/announce"
+)
 
 MQTT_BROKER = os.getenv("MQTT_BROKER", default="mqtt")
 MQTT_PORT = os.getenv("MQTT_PORT", default=8883)
@@ -170,9 +185,7 @@ def publish_ha_discovery(client, announce_topic, announce_payload):
                 "model": "OpenEVSE",
                 "name": f"OpenEVSE {openevse_id}",
                 "ids": [openevse_id],
-                "connections": [
-                    ["mac", openevse_id]
-                ],
+                "connections": [["mac", openevse_id]],
                 "configuration_url": announce_payload["http"],
             },
         }
@@ -182,11 +195,17 @@ def publish_ha_discovery(client, announce_topic, announce_payload):
 
         abbreviated_discovery_data = abbreviate_ha_mqtt_keys(discovery_data)
         logger.debug(f"discovery_data: {json.dumps(discovery_data)}")
-        logger.debug(f"abbreviated_discovery_data: {json.dumps(abbreviated_discovery_data)}")
+        logger.debug(
+            f"abbreviated_discovery_data: {json.dumps(abbreviated_discovery_data)}"
+        )
 
-        (result, mid) = client.publish(discovery_topic, json.dumps(discovery_data), retain=True)
+        (result, mid) = client.publish(
+            discovery_topic, json.dumps(discovery_data), retain=True
+        )
         if result != 0:
-            logger.error(f"MQTT: Error publishing discovery, result: {result}, topic: {discovery_topic}")
+            logger.error(
+                f"MQTT: Error publishing discovery, result: {result}, topic: {discovery_topic}"
+            )
         else:
             logger.info(f"MQTT: Published discovery, topic: {discovery_topic}")
 

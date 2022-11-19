@@ -15,3 +15,11 @@ run: build
 		$(ENVRC_VARS) \
 		-v ${PWD}:/src \
 		$(IMAGE):$(TAG)
+
+black:
+	docker run \
+		-it \
+		--rm \
+		-v ${PWD}:/src \
+		python:3.11-slim \
+		bash -c "pip install black && black /src/container/"
