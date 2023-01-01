@@ -23,18 +23,18 @@ Respond to OpenEVSE data published to an MQTT broker and create the correspondin
         spec:
           terminationGracePeriodSeconds: 0
           containers:
-          - env:
-            - name: MQTT_BROKER
-              value: mqtt.broker.name.com
-            - name: MQTT_USERNAME
-              value: mqtt_user
-            - name: MQTT_PASSWORD
-              value: itsasecret
-            - name: HA_DISCOVERY_PREFIX
-              value: ha-discovery
-            image: jlrgraham/openevse-mqtt-ha-discovery:latest
-            imagePullPolicy: Always
-            name: openevse-mqtt-ha-discovery
+            - env:
+                - name: MQTT_BROKER
+                  value: mqtt.broker.name.com
+                - name: MQTT_USERNAME
+                  value: mqtt_user
+                - name: MQTT_PASSWORD
+                  value: itsasecret
+                - name: HA_DISCOVERY_PREFIX
+                  value: ha-discovery
+              image: jlrgraham/openevse-mqtt-ha-discovery:latest
+              imagePullPolicy: Always
+              name: openevse-mqtt-ha-discovery
           restartPolicy: Always
 
 ## Settings
