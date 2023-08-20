@@ -173,7 +173,7 @@ def publish_ha_discovery(client, announce_topic, announce_payload):
 
         discovery_data = {
             "~": topic_base,
-            "name": config['ha_name'],
+            "name": config["ha_name"],
             "unique_id": f"openevse-{openevse_id}-{key}",
             "state_topic": f"{topic_base}/{key}",
             "availability_topic": announce_topic,

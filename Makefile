@@ -3,18 +3,20 @@ REPO_NAME := $(shell basename ${PWD})
 IMAGE := $(REPO_NAME)
 TAG := local-dev
 
+DOCKER_IMAGE ?= $(IMAGE):$(TAG)
+
 ENVRC_VARS := $(shell awk -F'[ =]' '/^export / {print $$2}' .envrc | xargs -I{} echo '-e {}')
 
 build:
-	docker build --tag $(IMAGE):$(TAG) container
+	docker build --tag $(DOCKER_IMAGE) container
 
-run: build
+run:
 	docker run \
 		-it \
 		--rm \
 		$(ENVRC_VARS) \
 		-v ${PWD}:/src \
-		$(IMAGE):$(TAG)
+		$(DOCKER_IMAGE)
 
 black:
 	docker run \
