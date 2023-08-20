@@ -8,7 +8,7 @@ DOCKER_IMAGE ?= $(IMAGE):$(TAG)
 ENVRC_VARS := $(shell awk -F'[ =]' '/^export / {print $$2}' .envrc | xargs -I{} echo '-e {}')
 
 build:
-	docker build --tag $(DOCKER_IMAGE) container
+	docker buildx build --tag $(DOCKER_IMAGE) container
 
 run:
 	docker run \
