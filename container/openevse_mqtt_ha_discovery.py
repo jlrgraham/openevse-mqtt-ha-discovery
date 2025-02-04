@@ -55,14 +55,14 @@ def abbreviate_ha_mqtt_keys(data):
     return rendered_generator(data)
 
 
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
+def on_connect(client, userdata, flags, reason_code, properties):
+    if reason_code == 0:
         logger.info("MQTT: Connected to broker.")
         announce_subscribe = f"{OPENEVSE_ANNOUNCE_MQTT_PREFIX}/+"
         logger.info(f"MQTT: Subscribe: {announce_subscribe}")
         client.subscribe(announce_subscribe)
     else:
-        logger.error(f"MQTT: Failed to connect, rc: {rc}")
+        logger.error(f"MQTT: Failed to connect, reason_code: {reason_code}")
 
 
 def on_message(client, userdata, msg):
@@ -214,7 +214,7 @@ def run():
     if MQTT_BROKER is None:
         raise Exception("MQTT_BROKER must be defined.")
 
-    client = mqtt.Client(MQTT_CLIENT_ID)
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, client_id=MQTT_CLIENT_ID)
 
     if MQTT_USERNAME is not None and MQTT_PASSWORD is not None:
         logger.info(f"MQTT: Authentication enabled, connect as: {MQTT_USERNAME}")
