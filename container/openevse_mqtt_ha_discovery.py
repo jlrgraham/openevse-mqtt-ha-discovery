@@ -108,6 +108,16 @@ OPENEVSE_HA_DISCOVERY_KEYS = {
             "enabled_by_default": "false",
         },
     },
+    "max_current": {
+        "ha_domain": "sensor",
+        "ha_name": "Max Current",
+        "ha_discovery_config": {
+            "device_class": "current",
+            "unit_of_measurement": "A",
+            "state_class": "measurement",
+            "enabled_by_default": "false",
+        },
+    },
     "session_energy": {
         "ha_domain": "sensor",
         "ha_name": "Session Energy",
